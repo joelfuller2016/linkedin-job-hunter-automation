@@ -1,0 +1,11 @@
+Score,Title,Company,Location,URL,Matched Skills,Salary,Posted Date,Source,Search Query
+14,Senior C# Developer,Microsoft,Remote,https://linkedin.com/jobs/view/12345,"c#,.net,azure,sql","$140,000 - $180,000",2025-05-30,LinkedIn,"C# Software Engineer remote"
+12,Principal .NET Architect,Google,Remote,https://linkedin.com/jobs/view/12346,"c#,.net,gcp,microservices","$160,000 - $220,000",2025-05-30,LinkedIn,".NET Developer Senior remote"
+11,Lead Backend Engineer,Amazon,Remote,https://linkedin.com/jobs/view/12347,"c#,.net,aws,sql,devops","$130,000 - $170,000",2025-05-29,LinkedIn,"Backend Engineer C# remote"
+10,Senior Software Engineer,Meta,Remote,https://linkedin.com/jobs/view/12348,"c#,.net,sql,api","$135,000 - $175,000",2025-05-29,LinkedIn,"C# Software Engineer remote"
+9,Staff Software Engineer,Netflix,Remote,https://linkedin.com/jobs/view/12349,"c#,.net,azure,microservices","$150,000 - $200,000",2025-05-28,LinkedIn,"SQL Server Developer remote"
+8,Senior .NET Developer,Spotify,Remote,https://indeed.com/viewjob?jk=abc123,"c#,.net,sql","$120,000 - $160,000",2025-05-28,Indeed,"C# .NET developer remote"
+8,Principal C# Engineer,Atlassian,Remote,https://stackoverflow.com/jobs/456789,"c#,.net,azure,devops","$140,000 - $185,000",2025-05-27,StackOverflow,".NET C# remote"
+7,Senior Backend Developer,GitHub,Remote,https://linkedin.com/jobs/view/12350,"c#,.net,sql,api","$125,000 - $165,000",2025-05-27,LinkedIn,"Backend Engineer C# remote"
+7,Software Engineer III,Zoom,Remote,https://dice.com/jobs/detail/xyz789,"c#,.net,azure","$115,000 - $155,000",2025-05-26,Dice,"C# remote"
+6,Senior C# Developer,HashiCorp,Remote,https://linkedin.com/jobs/view/12351,"c#,.net,devops","$130,000 - $170,000",2025-05-26,LinkedIn,"C# Software Engineer remote"
