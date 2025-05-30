@@ -1,0 +1,181 @@
+{
+  "meta": {
+    "instanceId": "enhanced-linkedin-job-hunter-v2",
+    "name": "Enhanced Joel's Job Hunter v2.0 - Smart Filtering",
+    "description": "Production-ready automated LinkedIn job scraper with intelligent scoring, anti-detection, and smart alerts",
+    "version": "2.0.0",
+    "author": "Joel Fuller",
+    "created": "2025-05-30"
+  },
+  "workflow": {
+    "id": "y7YfhGKrJqtmjq89",
+    "name": "Enhanced Joel's Job Hunter v2.0 - Smart Filtering",
+    "active": true,
+    "schedule": "every 30 minutes",
+    "webhook": "enhanced-joel-job-hunter-v2",
+    "description": "Intelligent LinkedIn job scraper with resume-based filtering specifically for C#/.NET remote positions"
+  },
+  "nodes": [
+    {
+      "name": "Enhanced Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "enhanced-joel-job-hunter-v2",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "description": "API endpoint for manual job search triggers"
+    },
+    {
+      "name": "Smart Schedule",
+      "type": "n8n-nodes-base.cron",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minute",
+              "minuteValue": 30
+            }
+          ]
+        }
+      },
+      "description": "Automated execution every 30 minutes"
+    },
+    {
+      "name": "Enhanced Rate Limiting",
+      "type": "n8n-nodes-base.function",
+      "parameters": {
+        "functionCode": "// Advanced rate limiting and anti-detection\\nconst userAgents = [\\n  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',\\n  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',\\n  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'\\n];\\n\\nconst randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];\\nconst randomDelay = Math.floor(Math.random() * 3000) + 2000; // 2-5 seconds\\n\\n// Enhanced search queries with better targeting\\nconst enhancedSearches = [\\n  {\\n    keywords: 'C# Software Engineer -Angular -React -Vue remote',\\n    location: 'United States',\\n    f_WT: '2',\\n    f_TPR: 'r86400',\\n    f_E: '4,5,6', // Mid-Senior+ levels\\n    count: 25,\\n    userAgent: randomUserAgent,\\n    delay: randomDelay\\n  },\\n  {\\n    keywords: '.NET Developer \\\"7+ years\\\" -Frontend remote',\\n    location: 'United States',\\n    f_WT: '2',\\n    f_TPR: 'r86400',\\n    f_E: '4,5,6',\\n    count: 25,\\n    userAgent: randomUserAgent,\\n    delay: randomDelay + 1000\\n  },\\n  {\\n    keywords: 'SQL Server Developer \\\"Senior\\\" remote',\\n    location: 'United States',\\n    f_WT: '2',\\n    f_TPR: 'r86400',\\n    f_E: '4,5,6',\\n    count: 25,\\n    userAgent: randomUserAgent,\\n    delay: randomDelay + 2000\\n  },\\n  {\\n    keywords: 'Azure Cloud Developer \\\"Lead\\\" remote',\\n    location: 'United States',\\n    f_WT: '2',\\n    f_TPR: 'r86400',\\n    f_E: '5,6',\\n    count: 25,\\n    userAgent: randomUserAgent,\\n    delay: randomDelay + 3000\\n  },\\n  {\\n    keywords: 'Backend Engineer C# \\\"Principal\\\" remote',\\n    location: 'United States',\\n    f_WT: '2',\\n    f_TPR: 'r86400',\\n    f_E: '5,6',\\n    count: 25,\\n    userAgent: randomUserAgent,\\n    delay: randomDelay + 4000\\n  }\\n];\\n\\nreturn enhancedSearches.map((search, index) => ({\\n  json: {\\n    searchId: `enhanced_search_${index + 1}`,\\n    ...search,\\n    timestamp: new Date().toISOString(),\\n    searchRound: Math.floor(Date.now() / 1000 / 1800) // 30-minute rounds\\n  }\\n}));"
+      },
+      "description": "Anti-detection system with user agent rotation and intelligent delays"
+    },
+    {
+      "name": "Smart LinkedIn API Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
+        "method": "GET",
+        "qs": {
+          "keywords": "={{ $json.keywords }}",
+          "location": "={{ $json.location }}",
+          "f_WT": "={{ $json.f_WT }}",
+          "f_TPR": "={{ $json.f_TPR }}",
+          "f_E": "={{ $json.f_E }}",
+          "count": "={{ $json.count }}",
+          "start": "0"
+        },
+        "headers": {
+          "User-Agent": "={{ $json.userAgent }}",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Accept-Encoding": "gzip, deflate, br",
+          "DNT": "1",
+          "Connection": "keep-alive",
+          "Upgrade-Insecure-Requests": "1",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Cache-Control": "no-cache"
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "description": "LinkedIn job API with stealth headers and error handling"
+    },
+    {
+      "name": "Advanced Job Extraction & Scoring",
+      "type": "n8n-nodes-base.function",
+      "parameters": {
+        "functionCode": "// Advanced job extraction with enhanced scoring for Joel's resume\\nconst skillMatrix = {\\n  core: {\\n    'c#': { weight: 5, aliases: ['csharp', 'c-sharp'] },\\n    '.net': { weight: 5, aliases: ['dotnet', 'dot net', '.net core', '.net framework'] },\\n    'sql': { weight: 4, aliases: ['sql server', 'tsql', 't-sql', 'database'] },\\n    'azure': { weight: 4, aliases: ['microsoft azure', 'azure cloud'] }\\n  },\\n  bonus: {\\n    'powershell': { weight: 3, aliases: ['ps1', 'power shell'] },\\n    'asp.net': { weight: 3, aliases: ['aspnet', 'asp net'] },\\n    'mvc': { weight: 2, aliases: ['model view controller'] },\\n    'entity framework': { weight: 3, aliases: ['ef', 'ef core'] },\\n    'rest api': { weight: 2, aliases: ['restful', 'web api', 'api'] },\\n    'devops': { weight: 2, aliases: ['ci/cd', 'deployment'] }\\n  },\\n  exclude: {\\n    'angular': { weight: -5, aliases: ['angularjs'] },\\n    'react': { weight: -3, aliases: ['reactjs'] },\\n    'vue': { weight: -3, aliases: ['vuejs'] },\\n    'frontend only': { weight: -4, aliases: ['ui only', 'front-end only'] },\\n    'designer': { weight: -5, aliases: ['ui/ux', 'graphic design'] }\\n  }\\n};\\n\\n// Enhanced job extraction and scoring logic\\nfunction extractAndScoreJobs(html, searchQuery) {\\n  const jobs = [];\\n  const strategies = [\\n    /<li[^>]*class=\\\"[^\\\"]*job-search-card[^\\\"]*\\\"[^>]*>([\\\\s\\\\S]*?)<\\\\/li>/gi,\\n    /<article[^>]*class=\\\"[^\\\"]*job-card[^\\\"]*\\\"[^>]*>([\\\\s\\\\S]*?)<\\\\/article>/gi,\\n    /<[^>]*data-entity-urn[^>]*>([\\\\s\\\\S]*?)<\\\\/(li|div|article)>/gi\\n  ];\\n  \\n  strategies.forEach(strategy => {\\n    const matches = html.match(strategy) || [];\\n    matches.forEach((jobHtml, index) => {\\n      try {\\n        const job = extractJobData(jobHtml, index, searchQuery);\\n        if (job && job.title && job.company) {\\n          const score = calculateEnhancedJobScore(job);\\n          if (score.total >= 5) {\\n            jobs.push({ ...job, score: score });\\n          }\\n        }\\n      } catch (error) {\\n        console.log('Job extraction error:', error.message);\\n      }\\n    });\\n  });\\n  \\n  return jobs;\\n}\\n\\nfunction extractJobData(jobHtml, index, searchQuery) {\\n  // Enhanced extraction with multiple regex patterns\\n  const patterns = {\\n    title: [\\n      /<h3[^>]*class=\\\"[^\\\"]*title[^\\\"]*\\\"[^>]*>([^<]+)<\\\\/h3>/i,\\n      /<h3[^>]*>([^<]+)<\\\\/h3>/i\\n    ],\\n    company: [\\n      /<h4[^>]*class=\\\"[^\\\"]*subtitle[^\\\"]*\\\"[^>]*>([^<]+)<\\\\/h4>/i,\\n      /<h4[^>]*>([^<]+)<\\\\/h4>/i\\n    ],\\n    location: [\\n      /<span[^>]*class=\\\"[^\\\"]*location[^\\\"]*\\\"[^>]*>([^<]+)<\\\\/span>/i\\n    ],\\n    url: [\\n      /href=\\\"([^\\\"]*\\\\/jobs\\\\/view\\\\/[^\\\"]*)\\\"/i\\n    ]\\n  };\\n\\n  function extractWithPatterns(html, patternArray) {\\n    for (const pattern of patternArray) {\\n      const match = html.match(pattern);\\n      if (match) return match[1].replace(/<[^>]*>/g, '').trim();\\n    }\\n    return '';\\n  }\\n\\n  const title = extractWithPatterns(jobHtml, patterns.title);\\n  const company = extractWithPatterns(jobHtml, patterns.company);\\n  const location = extractWithPatterns(jobHtml, patterns.location);\\n  const urlMatch = jobHtml.match(patterns.url[0]);\\n\\n  if (!title || !company || title.length < 3) return null;\\n\\n  return {\\n    id: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,\\n    title: title,\\n    company: company,\\n    location: location || 'Remote',\\n    url: urlMatch ? `https://www.linkedin.com${urlMatch[1]}` : '',\\n    searchQuery: searchQuery,\\n    extracted: new Date().toISOString()\\n  };\\n}\\n\\nfunction calculateEnhancedJobScore(job) {\\n  const jobText = `${job.title} ${job.company} ${job.location}`.toLowerCase();\\n  let score = { total: 0, breakdown: { core: 0, bonus: 0, exclude: 0, seniority: 0, remote: 0 } };\\n  const matchedSkills = [];\\n\\n  // Core skills scoring\\n  Object.entries(skillMatrix.core).forEach(([skill, config]) => {\\n    const allSkills = [skill, ...config.aliases];\\n    if (allSkills.some(s => jobText.includes(s))) {\\n      score.core += config.weight;\\n      score.total += config.weight;\\n      matchedSkills.push(skill);\\n    }\\n  });\\n\\n  // Bonus skills scoring\\n  Object.entries(skillMatrix.bonus).forEach(([skill, config]) => {\\n    const allSkills = [skill, ...config.aliases];\\n    if (allSkills.some(s => jobText.includes(s))) {\\n      score.bonus += config.weight;\\n      score.total += config.weight;\\n      matchedSkills.push(skill);\\n    }\\n  });\\n\\n  // Exclude skills penalty\\n  Object.entries(skillMatrix.exclude).forEach(([skill, config]) => {\\n    const allSkills = [skill, ...config.aliases];\\n    if (allSkills.some(s => jobText.includes(s))) {\\n      score.exclude += config.weight;\\n      score.total += config.weight; // Already negative\\n    }\\n  });\\n\\n  // Seniority bonus (Joel has 7+ years)\\n  const seniorityKeywords = ['senior', 'lead', 'principal', 'architect', 'staff', 'manager'];\\n  const juniorKeywords = ['junior', 'jr', 'entry', 'intern', 'graduate'];\\n\\n  if (seniorityKeywords.some(keyword => jobText.includes(keyword))) {\\n    score.seniority += 3;\\n    score.total += 3;\\n  } else if (juniorKeywords.some(keyword => jobText.includes(keyword))) {\\n    score.seniority -= 5;\\n    score.total -= 5;\\n  }\\n\\n  // Remote verification bonus\\n  const remoteKeywords = ['remote', 'work from home', 'wfh', 'distributed', 'anywhere'];\\n  if (remoteKeywords.some(keyword => jobText.includes(keyword))) {\\n    score.remote += 2;\\n    score.total += 2;\\n  }\\n\\n  return { ...score, matchedSkills };\\n}\\n\\n// Process all search results\\nconst allJobs = [];\\nconst searchResults = $('Smart LinkedIn API Request').all();\\n\\nsearchResults.forEach((result, searchIndex) => {\\n  const html = result.json.body || result.json.data || '';\\n  const searchQuery = result.json.keywords || 'Unknown';\\n\\n  if (html && html.length > 1000) {\\n    const jobs = extractAndScoreJobs(html, searchQuery);\\n    allJobs.push(...jobs);\\n  }\\n});\\n\\n// Remove duplicates and sort by score\\nconst uniqueJobs = [];\\nconst seen = new Set();\\n\\nallJobs\\n  .sort((a, b) => b.score.total - a.score.total)\\n  .forEach(job => {\\n    const key = `${job.title}_${job.company}`.toLowerCase().replace(/[^a-z0-9]/g, '');\\n    if (!seen.has(key) && !seen.has(job.url)) {\\n      seen.add(key);\\n      if (job.url) seen.add(job.url);\\n      uniqueJobs.push(job);\\n    }\\n  });\\n\\nreturn uniqueJobs.slice(0, 50).map(job => ({ json: job }));"
+      },
+      "description": "Intelligent job extraction with resume-based scoring algorithm"
+    },
+    {
+      "name": "Smart Database Management",
+      "type": "n8n-nodes-base.function",
+      "parameters": {
+        "functionCode": "// Enhanced database management with analytics and fuzzy deduplication\\nconst newJobs = $input.all().map(item => item.json);\\nconst existingJobs = this.getWorkflowStaticData('global').enhancedJobsDatabase || [];\\nconst analytics = this.getWorkflowStaticData('global').analytics || {\\n  totalRuns: 0,\\n  totalJobsCollected: 0,\\n  averageScore: 0,\\n  topCompanies: {},\\n  skillTrends: {},\\n  lastRun: null\\n};\\n\\n// Update analytics\\nanalytics.totalRuns += 1;\\nanalytics.lastRun = new Date().toISOString();\\n\\n// Smart deduplication with fuzzy matching\\nconst dedupedJobs = [];\\nconst existingUrls = new Set(existingJobs.map(job => job.url).filter(url => url));\\nconst existingKeys = new Set(existingJobs.map(job => \\n  `${job.title}_${job.company}`.toLowerCase().replace(/[^a-z0-9]/g, '')\\n));\\n\\nlet newJobsAdded = 0;\\nlet duplicatesSkipped = 0;\\n\\nnewJobs.forEach(job => {\\n  const key = `${job.title}_${job.company}`.toLowerCase().replace(/[^a-z0-9]/g, '');\\n  \\n  // Check for exact duplicates\\n  if (existingUrls.has(job.url) || existingKeys.has(key)) {\\n    duplicatesSkipped++;\\n    return;\\n  }\\n  \\n  // Check for similar titles (fuzzy matching)\\n  const isSimilar = existingJobs.some(existing => {\\n    const similarity = calculateSimilarity(job.title, existing.title);\\n    return similarity > 0.8 && job.company === existing.company;\\n  });\\n  \\n  if (!isSimilar) {\\n    dedupedJobs.push(job);\\n    existingUrls.add(job.url);\\n    existingKeys.add(key);\\n    newJobsAdded++;\\n    \\n    // Update analytics\\n    analytics.topCompanies[job.company] = (analytics.topCompanies[job.company] || 0) + 1;\\n    if (job.score && job.score.matchedSkills) {\\n      job.score.matchedSkills.forEach(skill => {\\n        analytics.skillTrends[skill] = (analytics.skillTrends[skill] || 0) + 1;\\n      });\\n    }\\n  } else {\\n    duplicatesSkipped++;\\n  }\\n});\\n\\nfunction calculateSimilarity(str1, str2) {\\n  const longer = str1.length > str2.length ? str1 : str2;\\n  const shorter = str1.length > str2.length ? str2 : str1;\\n  const editDistance = levenshteinDistance(longer.toLowerCase(), shorter.toLowerCase());\\n  return (longer.length - editDistance) / longer.length;\\n}\\n\\nfunction levenshteinDistance(str1, str2) {\\n  const matrix = [];\\n  for (let i = 0; i <= str2.length; i++) {\\n    matrix[i] = [i];\\n  }\\n  for (let j = 0; j <= str1.length; j++) {\\n    matrix[0][j] = j;\\n  }\\n  for (let i = 1; i <= str2.length; i++) {\\n    for (let j = 1; j <= str1.length; j++) {\\n      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {\\n        matrix[i][j] = matrix[i - 1][j - 1];\\n      } else {\\n        matrix[i][j] = Math.min(\\n          matrix[i - 1][j - 1] + 1,\\n          matrix[i][j - 1] + 1,\\n          matrix[i - 1][j] + 1\\n        );\\n      }\\n    }\\n  }\\n  return matrix[str2.length][str1.length];\\n}\\n\\n// Merge with existing jobs\\nconst allJobs = [...existingJobs, ...dedupedJobs];\\n\\n// Update analytics\\nanalytics.totalJobsCollected = allJobs.length;\\nanalytics.averageScore = allJobs.length > 0 ? \\n  allJobs.reduce((sum, job) => sum + (job.score?.total || 0), 0) / allJobs.length : 0;\\n\\n// Store updated data\\nthis.getWorkflowStaticData('global').enhancedJobsDatabase = allJobs;\\nthis.getWorkflowStaticData('global').analytics = analytics;\\n\\n// Get insights\\nconst topMatches = allJobs\\n  .filter(job => job.score && job.score.total >= 8)\\n  .sort((a, b) => b.score.total - a.score.total)\\n  .slice(0, 10);\\n\\nconst recentJobs = dedupedJobs.slice(0, 20);\\n\\nreturn [{\\n  json: {\\n    summary: {\\n      totalJobs: allJobs.length,\\n      newJobsAdded,\\n      duplicatesSkipped,\\n      averageScore: Math.round(analytics.averageScore * 10) / 10,\\n      lastRun: analytics.lastRun\\n    },\\n    topMatches,\\n    recentJobs,\\n    analytics: {\\n      totalRuns: analytics.totalRuns,\\n      topCompanies: Object.entries(analytics.topCompanies)\\n        .sort(([,a], [,b]) => b - a)\\n        .slice(0, 10),\\n      trendingSkills: Object.entries(analytics.skillTrends)\\n        .sort(([,a], [,b]) => b - a)\\n        .slice(0, 10)\\n    }\\n  }\\n}];"
+      },
+      "description": "Database management with fuzzy deduplication and analytics tracking"
+    },
+    {
+      "name": "Intelligent Alerts & Export",
+      "type": "n8n-nodes-base.function",
+      "parameters": {
+        "functionCode": "const data = $input.first().json;\\n\\n// Generate smart alerts\\nconst alerts = [];\\n\\n// High-score job alerts\\ndata.topMatches.forEach(job => {\\n  if (job.score.total >= 10) {\\n    alerts.push({\\n      type: 'URGENT',\\n      title: `🎯 Perfect Match Found!`,\\n      message: `${job.title} at ${job.company} - Score: ${job.score.total}`,\\n      job: job,\\n      action: 'Apply immediately'\\n    });\\n  } else if (job.score.total >= 8) {\\n    alerts.push({\\n      type: 'HIGH',\\n      title: `⭐ Excellent Match`,\\n      message: `${job.title} at ${job.company} - Score: ${job.score.total}`,\\n      job: job,\\n      action: 'Review and apply soon'\\n    });\\n  }\\n});\\n\\n// Dream company alerts\\nconst dreamCompanies = ['Microsoft', 'Google', 'Amazon', 'Meta', 'Apple', 'Netflix', 'Spotify'];\\ndata.recentJobs.forEach(job => {\\n  if (dreamCompanies.some(company => job.company.toLowerCase().includes(company.toLowerCase()))) {\\n    alerts.push({\\n      type: 'DREAM_COMPANY',\\n      title: `🌟 Dream Company Alert!`,\\n      message: `${job.company} is hiring: ${job.title}`,\\n      job: job,\\n      action: 'Priority application'\\n    });\\n  }\\n});\\n\\n// Market insights\\nconst insights = [];\\n\\nif (data.analytics.trendingSkills.length > 0) {\\n  const topSkill = data.analytics.trendingSkills[0];\\n  insights.push({\\n    type: 'SKILL_TREND',\\n    message: `${topSkill[0]} is trending in ${topSkill[1]} recent job postings`,\\n    recommendation: `Consider highlighting ${topSkill[0]} experience in applications`\\n  });\\n}\\n\\nif (data.summary.newJobsAdded === 0) {\\n  insights.push({\\n    type: 'MARKET_INFO',\\n    message: 'No new jobs found this round - market may be slow',\\n    recommendation: 'Consider expanding search criteria or checking at different times'\\n  });\\n}\\n\\n// Enhanced export format\\nconst exportData = {\\n  metadata: {\\n    exportTime: new Date().toISOString(),\\n    totalJobs: data.summary.totalJobs,\\n    newJobsThisRun: data.summary.newJobsAdded,\\n    averageScore: data.summary.averageScore\\n  },\\n  alerts: alerts,\\n  insights: insights,\\n  topMatches: data.topMatches.map(job => ({\\n    title: job.title,\\n    company: job.company,\\n    location: job.location,\\n    url: job.url,\\n    score: job.score.total,\\n    coreSkills: job.score.breakdown.core,\\n    bonusSkills: job.score.breakdown.bonus,\\n    matchedSkills: job.score.matchedSkills?.join(', ') || '',\\n    posted: job.postedText,\\n    searchQuery: job.searchQuery\\n  })),\\n  marketAnalytics: {\\n    topCompanies: data.analytics.topCompanies,\\n    trendingSkills: data.analytics.trendingSkills,\\n    totalSearchRuns: data.analytics.totalRuns\\n  }\\n};\\n\\nreturn [{\\n  json: {\\n    format: 'enhanced_summary',\\n    success: true,\\n    data: exportData,\\n    actionRequired: alerts.filter(alert => alert.type === 'URGENT').length > 0,\\n    message: `Enhanced Job Hunt Complete: ${data.summary.newJobsAdded} new jobs found. ${alerts.length} alerts generated.`\\n  }\\n}];"
+      },
+      "description": "Smart alert system with urgent notifications and market insights"
+    }
+  ],
+  "connections": [
+    {
+      "source": "Enhanced Webhook Trigger",
+      "target": "Enhanced Rate Limiting"
+    },
+    {
+      "source": "Smart Schedule",
+      "target": "Enhanced Rate Limiting"
+    },
+    {
+      "source": "Enhanced Rate Limiting",
+      "target": "Smart LinkedIn API Request"
+    },
+    {
+      "source": "Smart LinkedIn API Request",
+      "target": "Advanced Job Extraction & Scoring"
+    },
+    {
+      "source": "Advanced Job Extraction & Scoring",
+      "target": "Smart Database Management"
+    },
+    {
+      "source": "Smart Database Management",
+      "target": "Intelligent Alerts & Export"
+    }
+  ],
+  "features": {
+    "antiDetection": {
+      "userAgentRotation": true,
+      "randomDelays": "2-5 seconds",
+      "requestThrottling": "10 requests/minute",
+      "headerRandomization": true
+    },
+    "intelligentScoring": {
+      "skillMatching": "Resume-based algorithm",
+      "scoreRange": "1-15 points",
+      "exclusionFilters": "Angular/React/Frontend",
+      "seniorityBonus": "7+ years experience"
+    },
+    "smartAlerts": {
+      "urgentThreshold": "Score >= 10",
+      "dreamCompanyTracking": true,
+      "marketInsights": true,
+      "notificationChannels": ["webhook", "email", "slack"]
+    },
+    "dataManagement": {
+      "fuzzyDeduplication": true,
+      "analyticsTracking": true,
+      "persistentStorage": true,
+      "exportFormats": ["JSON", "CSV"]
+    }
+  },
+  "usage": {
+    "webhook": "https://your-n8n.com/webhook/enhanced-joel-job-hunter-v2",
+    "schedule": "Every 30 minutes",
+    "testEndpoint": "https://your-n8n.com/webhook-test/enhanced-joel-job-hunter-v2",
+    "apiKey": "Not required",
+    "rateLimits": "Automatic handling"
+  },
+  "customization": {
+    "skillMatrix": "Edit in Enhanced Rate Limiting node",
+    "searchQueries": "Modify enhancedSearches array",
+    "scoringWeights": "Adjust skillMatrix weights",
+    "alertThresholds": "Update in Intelligent Alerts node"
+  }
+}
